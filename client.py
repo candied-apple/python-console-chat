@@ -7,8 +7,7 @@ import getpass
 import ctypes
 import colorama
 from colorama import Fore, Back, Style
-import platform
-import sts
+
 # Initialize colorama
 colorama.init()
 
@@ -18,19 +17,10 @@ BG_YELLOW = Back.YELLOW
 BG_GREEN = Back.GREEN
 BG_RED = Back.RED
 
-
-
 # Function to set the console title
 def set_console_title(title):
-    if platform.system() == 'Windows':
-        ctypes.windll.kernel32.SetConsoleTitleW(title)
-    elif platform.system() == 'Linux' or platform.system() == 'Darwin':  # 'Darwin' for macOS
-        sys.stdout.write("\x1b]2;{}\x07".format(title))
-    else:
-        print(f"Unsupported operating system: {platform.system()}")
+    ctypes.windll.kernel32.SetConsoleTitleW(title)
 
-
-# Function to register a new user
 # Function to register a new user
 def register_user(client_socket):
     username = input('Enter your username: ')
@@ -42,15 +32,10 @@ def register_user(client_socket):
     response = client_socket.recv(1024).decode('utf-8')
     print(f'{BG_YELLOW}Server:{RESET}', response)
 
-    if response == f'{BG_RED}Authentication failed. Please try again.{RESET}':
+    if response != f'{BG_GREEN}Authentication successful.{RESET}':
         print('Exiting.')
         client_socket.close()
         exit()
-    elif response != f'{BG_GREEN}Authentication successful.{RESET}':
-        print(f'Unexpected response from the server: {response}. Exiting.')
-        client_socket.close()
-        exit()
-
 
 # Function to receive messages from the server
 def receive_messages(client_socket):
